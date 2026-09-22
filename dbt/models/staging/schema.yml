@@ -1,0 +1,66 @@
+version: 2
+
+sources:
+  - name: raw
+    database: "{{ env_var('DATABRICKS_CATALOG') }}"
+    schema: "{{ env_var('DATABRICKS_RAW_SCHEMA', 'raw') }}"
+    tables:
+      - name: climbers
+      - name: grades
+
+models:
+  - name: stg_climbers
+    description: Cleanly named source records for individual climbers.
+    columns:
+      - name: user_id
+        description: Unique identifier of a climber in the source dataset.
+        data_tests:
+          - not_null
+          - unique
+
+  - name: stg_grades
+    description: Grade conversion records from numeric identifiers to French labels.
+    columns:
+      - name: grade_id
+        description: Numeric climbing grade identifier.
+        data_tests:
+          - not_null
+          - unique
+      - name: grade_fra
+        description: French climbing grade label.
+        data_tests:
+          - not_null
+
+  - name: int_climbers_transformed
+    description: Climbers enriched with their maximum-grade numeric value and label.
+    columns:
+      - name: user_id
+        data_tests:
+          - not_null
+          - unique
+      - name: grade_numeric
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_grades')
+                field: grade_id
+
+  - name: climber_country_sex_stats
+    description: Country and sex-level climber analytics.
+    columns:
+      - name: country
+        data_tests:
+          - not_null
+      - name: sex
+        data_tests:
+          - not_null
+      - name: climber_count
+        data_tests:
+          - not_null
+      - name: max_grade_numeric
+        data_tests:
+          - not_null
+      - name: max_grade_label
+        data_tests:
+          - not_null
