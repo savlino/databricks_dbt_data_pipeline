@@ -1,0 +1,45 @@
+name: dbt CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  dbt:
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_HTTP_PATH: ${{ secrets.DATABRICKS_HTTP_PATH }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+      DATABRICKS_CATALOG: ${{ secrets.DATABRICKS_CATALOG }}
+      DATABRICKS_SCHEMA: ${{ secrets.DATABRICKS_SCHEMA }}
+      DATABRICKS_RAW_SCHEMA: ${{ secrets.DATABRICKS_RAW_SCHEMA }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dbt Databricks adapter
+        run: pip install dbt-databricks
+
+      - name: Create dbt profile
+        run: cp dbt/profiles.yml.example dbt/profiles.yml
+
+      - name: Install dbt dependencies
+        run: dbt deps --project-dir dbt --profiles-dir dbt
+
+      - name: Build dbt models
+        run: dbt build --project-dir dbt --profiles-dir dbt
+
+      - name: Test dbt models
+        run: dbt test --project-dir dbt --profiles-dir dbt
