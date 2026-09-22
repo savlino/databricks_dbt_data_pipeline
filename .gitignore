@@ -1,0 +1,22 @@
+# Local secrets and dbt connection profiles
+.env
+.env.*
+!.env.example
+dbt/profiles.yml
+dbt/.user.yml
+
+# Python virtual environments and cache files
+.venv/
+__pycache__/
+*.py[cod]
+
+# dbt generated artifacts and logs
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
