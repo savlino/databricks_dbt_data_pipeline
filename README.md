@@ -116,7 +116,7 @@ The same result set, live in Databricks Unity Catalog:
 
 ![climber_country_sex_stats in Databricks Catalog Explorer](assets/climber_country_sex_stats_live.png)
 
-Generated from a live pipeline run on <DATE>.
+Generated from a live pipeline run on 2026-09-22.
 
 Generate or refresh both sample files manually after `dbt build`:
 
