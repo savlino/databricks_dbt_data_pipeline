@@ -11,8 +11,8 @@ stats as (
         country,
         sex,
         count(distinct user_id) as climber_count,
-        avg(age) as avg_age,
-        avg(grade_numeric) as avg_grade_numeric,
+        round(avg(age), 1) as avg_age,
+        round(avg(grade_numeric), 2) as avg_grade_numeric,
         percentile_approx(height, 0.5) as median_height,
         max(grade_numeric) as max_grade_numeric
     from climbers

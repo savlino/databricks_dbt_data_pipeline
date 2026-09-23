@@ -5,7 +5,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from databricks.sdk import WorkspaceClient
+from databricks_sql import execute_statement, get_workspace_client
 
 
 DEFAULT_SOURCE_DIR = Path(
@@ -40,23 +40,11 @@ def ensure_sources_exist(source_dir: Path) -> None:
         raise FileNotFoundError(f"Missing source CSV file(s) in {source_dir}: {missing}")
 
 
-def execute_statement(
-    workspace: WorkspaceClient, warehouse_id: str, statement: str
-) -> None:
-    result = workspace.statement_execution.execute_statement(
-        warehouse_id=warehouse_id,
-        statement=statement,
-        wait_timeout="50s",
-    )
-    if result.status and result.status.state.value == "FAILED":
-        raise RuntimeError(result.status.error.message)
-
-
 def main() -> None:
     args = parse_args()
     ensure_sources_exist(args.source_dir)
 
-    workspace = WorkspaceClient()
+    workspace = get_workspace_client()
     volume_fqn = f"{args.catalog}.{args.volume_schema}.{args.volume}"
     volume_path = f"/Volumes/{args.catalog}/{args.volume_schema}/{args.volume}"
 
