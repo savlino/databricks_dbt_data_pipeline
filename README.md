@@ -126,6 +126,34 @@ Generate or refresh both sample files manually after `dbt build`:
 
 Use `--limit <rows>` to export only the highest-ranked rows by `climber_count`. Without it, the script exports the full mart.
 
+## Lineage and Table History
+
+### Unity Catalog lineage
+
+Column- and table-level lineage is captured automatically from the dbt queries executed on the SQL Warehouse. The graph below traces the mart back through the staging views to the raw Delta tables:
+
+![Unity Catalog lineage for climber_country_sex_stats](assets/unity_catalog_lineage.png)
+
+The intermediate model is materialized as `ephemeral`, so dbt compiles it into the mart query as a CTE. It has no table of its own and therefore does not appear in the graph as a separate node.
+
+### Delta table history and time travel
+
+The mart is a Delta table, and each `dbt build` replaces it with a new table version. Every version is recorded in the transaction log:
+
+```sql
+DESCRIBE HISTORY main.climbers.climber_country_sex_stats;
+```
+
+![Delta table history](assets/delta_table_history.png)
+
+Earlier versions stay queryable, which is useful for comparing results across runs or checking what a previous build produced:
+
+```sql
+SELECT COUNT(*) FROM main.climbers.climber_country_sex_stats VERSION AS OF 0;
+```
+
+![Delta table querying 0 version](assets/delta_query_to_zero.png)
+
 ## Tests
 
 dbt tests cover non-null and unique keys in staging, the relationship between transformed numeric grades and the grade conversion table, uniqueness of `country, sex` in the mart, and the valid range of `grade_id` values.
