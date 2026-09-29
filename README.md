@@ -152,7 +152,7 @@ Earlier versions stay queryable, which is useful for comparing results across ru
 SELECT COUNT(*) FROM main.climbers.climber_country_sex_stats VERSION AS OF 0;
 ```
 
-![Delta table querying 0 version](assets/delta_query_to_zero.png)
+![Delta table querying 0 version](assets/delta_query_to_0.png)
 
 ## Tests
 
