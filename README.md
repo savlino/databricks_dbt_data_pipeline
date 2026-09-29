@@ -162,6 +162,8 @@ dbt tests cover non-null and unique keys in staging, the relationship between tr
 
 The GitHub Actions workflow is manually triggered from the Actions tab. It reads Databricks credentials from repository secrets and runs `dbt deps`, `dbt build`, and `dbt test`.
 
+![GitHub CI run result](assets/github_actions_run_result.png)
+
 Two orchestration options are available:
 
 - **GitHub Actions:** manually run the included workflow for repository-based validation and deployment checks.
