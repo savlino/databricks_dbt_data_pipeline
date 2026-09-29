@@ -184,14 +184,27 @@ This project reimplements the same pipeline from the original [Airflow/PostgreSQ
 ```text
 .
 ├── .github/workflows/ci.yml
+├── assets
+│   ├── climber_country_sex_stats_live.png
+│   ├── delta_query_to_0.png
+│   ├── delta_table_history.png
+│   ├── unity_catalog_lineage.png
+│   └── unity_catalog_structure.png
 ├── dbt
 │   ├── models
 │   │   ├── intermediate
+│   │   │   └── int_climbers_transformed.sql
 │   │   ├── marts
+│   │   │   └── climber_country_sex_stats.sql
 │   │   └── staging
-│   ├── tests
+│   │   │   ├── schema.yml
+│   │   │   ├── stg_climbers.sql
+│   │   │   └── stg_grades.sql
 │   ├── dbt_project.yml
-│   └── profiles.yml.example
+│   ├── profiles.yml.example
+│   └── tests
+│       ├── assert_climber_country_sex_stats_unique.sql
+│       └── assert_grade_id_within_source_range.sql
 ├── loaders
 │   ├── databricks_sql.py
 │   └── load_to_databricks.py
@@ -201,6 +214,8 @@ This project reimplements the same pipeline from the original [Airflow/PostgreSQ
 ├── scripts
 │   └── export_sample_output.py
 ├── .env.example
+├── .gitignore
+├── LICENSE
 ├── requirements-dev.txt
 └── README.md
 ```
