@@ -1,16 +1,16 @@
-"""Upload the source CSV files to a Unity Catalog volume and rebuild raw Delta tables."""
+"""Download the Kaggle dataset, upload it to a Unity Catalog volume, and rebuild raw Delta tables."""
 
 from __future__ import annotations
 
+
+import kagglehub
 import argparse
 from pathlib import Path
 
 from databricks_sql import execute_statement, get_workspace_client
 
 
-DEFAULT_SOURCE_DIR = Path(
-    r"C:\Users\A200072285\Documents\wrkk\airflow_climbers_data\airflow\data"
-)
+KAGGLE_DATASET = "jordizar/climb-dataset"
 DEFAULT_CATALOG = "main"
 DEFAULT_VOLUME_SCHEMA = "climbers"
 DEFAULT_VOLUME = "raw_volume"
@@ -24,7 +24,11 @@ FILES = {
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source-dir", type=Path, default=DEFAULT_SOURCE_DIR)
+    parser.add_argument(
+        "--source-dir",
+        type=Path,
+        help="Use an existing local dataset directory instead of downloading from Kaggle",
+    )
     parser.add_argument("--catalog", default=DEFAULT_CATALOG)
     parser.add_argument("--volume-schema", default=DEFAULT_VOLUME_SCHEMA)
     parser.add_argument("--volume", default=DEFAULT_VOLUME)
@@ -42,7 +46,12 @@ def ensure_sources_exist(source_dir: Path) -> None:
 
 def main() -> None:
     args = parse_args()
-    ensure_sources_exist(args.source_dir)
+    source_dir = args.source_dir
+    if source_dir is None:
+        print(f"Downloading latest Kaggle dataset: {KAGGLE_DATASET}...")
+        source_dir = Path(kagglehub.dataset_download(KAGGLE_DATASET))
+        print(f"Dataset downloaded to {source_dir}.")
+    ensure_sources_exist(source_dir)
 
     workspace = get_workspace_client()
     volume_fqn = f"{args.catalog}.{args.volume_schema}.{args.volume}"
@@ -60,7 +69,7 @@ def main() -> None:
     )
 
     for filename, table_name in FILES.items():
-        local_path = args.source_dir / filename
+        local_path = source_dir / filename
         volume_file_path = f"{volume_path}/{filename}"
         with local_path.open("rb") as source_file:
             workspace.files.upload(volume_file_path, source_file, overwrite=True)

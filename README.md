@@ -26,7 +26,7 @@ The pipeline's Delta tables as materialized by dbt, organized under `main.climbe
 - Python 3.11 or later
 - Access to a Databricks workspace with Unity Catalog and a SQL Warehouse
 - A Databricks Personal Access Token with permission to create and query objects in the target catalog
-- The source files `climber_df.csv` and `grades_conversion_table.csv`
+- Kaggle access to `jordizar/climb-dataset` (configure Kaggle credentials if prompted by KaggleHub)
 
 ## Quick Start
 
@@ -59,12 +59,14 @@ Get-Content .env | ForEach-Object {
 }
 ```
 
-Copy the dbt profile template, then upload the source CSV files and rebuild the raw Delta tables. Replace `<warehouse-id>` with the identifier at the end of `DATABRICKS_HTTP_PATH`.
+Copy the dbt profile template, then download the latest Kaggle dataset, upload its CSV files, and rebuild the raw Delta tables. Replace `<warehouse-id>` with the identifier at the end of `DATABRICKS_HTTP_PATH`.
 
 ```powershell
 Copy-Item dbt\profiles.yml.example dbt\profiles.yml
 .\.venv\Scripts\python.exe loaders\load_to_databricks.py --warehouse-id <warehouse-id>
 ```
+
+The loader downloads `jordizar/climb-dataset` with KaggleHub by default. Use `--source-dir <path>` to load an existing local copy instead.
 
 Build and test the dbt project:
 
