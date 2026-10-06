@@ -97,7 +97,7 @@ The loader is idempotent: it overwrites the CSVs in the Unity Catalog volume and
 
 ## Sample Output
 
-The table below shows the top 10 groups by `climber_count` from a live run of the pipeline. The full result (54 rows, all countries and both sexes) is available in [`sample_output/climber_country_sex_stats.csv`](sample_output/climber_country_sex_stats.csv).
+The table below shows the top 10 groups by `climber_count` from a live run of the pipeline. The full result (52 data rows, all countries and both sexes) is available in [`sample_output/climber_country_sex_stats.csv`](sample_output/climber_country_sex_stats.csv).
 
 | Country | Sex | Climbers | Avg Age | Avg Grade (numeric) | Median Height (cm) | Max Grade | Climbers at Max Grade |
 |---------|-----|---------:|--------:|---------------------:|--------------------:|-----------|----------------------:|
